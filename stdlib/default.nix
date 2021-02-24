@@ -19,11 +19,10 @@ stdenv.mkDerivation rec {
     mkdir $out
     mv usr/local/libexec/${versionedPathSegment} $out/libexec
     mv usr/local/lib/${versionedPathSegment} $out/lib
-'';
+  '';
 
   meta = with lib; {
     description = "The standard library for the Single-Assignment C programming language";
     homepage = "http://www.sac-home.org/";
-    platforms = [ "x86_64-linux" ];
   };
 }

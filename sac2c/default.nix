@@ -15,6 +15,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ autoPatchelfHook ];
   buildInputs = [ libuuid ];
   #https://nixos.wiki/wiki/Packaging/Binaries
+  #TODO: Use this instead of autoPatchElf
   rpath = lib.makeLibraryPath [
     glibc
     libuuid
@@ -29,6 +30,8 @@ stdenv.mkDerivation rec {
   #sed magic:
   #https://www.grymoire.com/Unix/Sed.html#uh-42
   #https://stackoverflow.com/questions/18620153/find-matching-text-and-replace-next-line
+  #We set outputdirs to "". This means the -install flag to the compiler won't work.
+  #We need to add both stdLib and sac2c paths because in the normie install, those dirs are shared (what a horrible thought!)
   buildPhase = ''
     #We get rid of the versioned path segments as in nix versioning is in the prefix
     for dir in include lib libexec share; do
@@ -42,19 +45,19 @@ stdenv.mkDerivation rec {
       --replace /usr/sbin/ranlib ${binutils}/bin/ranlib
     sed -e "
     /EXTLIBPATH       :=/ c\
-    EXTLIBPATH       :=  \"${rpath}\"
+    EXTLIBPATH       :=  \"\"
     " -e "
     /TREEPATH         :=  \".:\"/ c\
-    TREEPATH         :=  \".:${sacStdLib}/libexec:\"
+    TREEPATH         :=  \".:${sacStdLib}/libexec:$out/libexec:\"
     " -e '
     /LIB_OUTPUTDIR    :=/ c\
     LIB_OUTPUTDIR    :=  ""
     ' -e '
-    /TREE_OUTPUTDIR    :=/ c\
+    /TREE_OUTPUTDIR   :=/ c\
     TREE_OUTPUTDIR    :=  ""
     ' -e "
     /LIBPATH          :=/!b;n;c\
-                         \"$out/lib/rt:${sacStdLib}/lib/modlibs:\"
+                         \"${sacStdLib}/lib/modlibs:$out/lib/modlibs:$out/lib/rt:\"
     "  -e "
     /SACINCLUDES      :=/ c\
     SACINCLUDES      :=  \"-I$out/include/release\"
@@ -96,7 +99,5 @@ stdenv.mkDerivation rec {
     homepage = "http://www.sac-home.org/";
     #changelog = ??
     #license = TODO: ./LICENSE.txt;
-    #TODO: Possibly support mac or something
-    platforms = [ "x86_64-linux" ];
   };
 }

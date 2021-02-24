@@ -9,9 +9,9 @@
     let sacVCs = {
           version = "1.3.3";
           vname = "MijasCosta";
-          changes = "552";
+          changes = "572";
           rev = "1";
-          commit = "g630ef";
+          commit = "g9eca";
         };
     in
     flake-utils.lib.eachDefaultSystem ( system:
@@ -20,8 +20,9 @@
       in
         with pkgs; rec {
           packages = flake-utils.lib.flattenTree rec {
+            libxcrypt = callPackage ./libxcrypt { };
             # TODO: should this be smtng like sac.compiler?
-            sac2c = callPackage ./sac2c { inherit sacStdLib sacVCs; };
+            sac2c = callPackage ./sac2c { inherit sacStdLib sacVCs libxcrypt; };
             sacStdLib = callPackage ./stdlib { inherit sacVCs; };
           };
           defaultPackage = packages.sac2c;

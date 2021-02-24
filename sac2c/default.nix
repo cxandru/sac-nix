@@ -1,5 +1,5 @@
 { lib, stdenv, fetchurl,
-  glibc, libuuid, gcc, binutils,
+  glibc, libuuid, libxcrypt, gcc, binutils,
   sacVCs, sacStdLib,
   bash, autoPatchelfHook,
 }:
@@ -12,10 +12,11 @@ stdenv.mkDerivation rec {
   pname = "sac2c";
   src = fetchurl {
     url = "https://gitlab.science.ru.nl/sac-group/sac-packages/-/raw/master/packages/weekly/Linux/${version}-${changes}-${rev}/basic/${pname}-${version}-${vname}-${changes}-${commit}-omnibus.tar.gz";
-    sha256 = "61ad03f16a4a13c8094bce016d9105979db3c6868120d156d908c1c011a6958d";
+    sha256 = "581636207722094d9d1f38595ee479e76947c83159af12f312580dd81da49a1e";
   };
   nativeBuildInputs = [ autoPatchelfHook ];
-  buildInputs = [ libuuid ];
+  #libuuid.so.1, libcrypt.so.2
+  buildInputs = [ libuuid libxcrypt ];
   #https://nixos.wiki/wiki/Packaging/Binaries
   #TODO: Use this instead of autoPatchElf
   rpath = lib.makeLibraryPath [

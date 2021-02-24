@@ -32,6 +32,7 @@ stdenv.mkDerivation rec {
   #https://stackoverflow.com/questions/18620153/find-matching-text-and-replace-next-line
   #We set outputdirs to "". This means the -install flag to the compiler won't work.
   #We need to add both stdLib and sac2c paths because in the normie install, those dirs are shared (what a horrible thought!)
+  #It seems the !b... command messes up any replacements following it (!)
   buildPhase = ''
     #We get rid of the versioned path segments as in nix versioning is in the prefix
     for dir in include lib libexec share; do
@@ -43,7 +44,11 @@ stdenv.mkDerivation rec {
     substituteInPlace share/sac2crc$postFix \
       --replace /usr/sbin/cc ${gcc}/bin/cc \
       --replace /usr/sbin/ranlib ${binutils}/bin/ranlib
+    replaceNextCmds='!b;n;c'
     sed -e "
+    /SACINCLUDES      :=/ c\
+    SACINCLUDES      :=  \"-I$out/include/release\"
+    " -e "
     /EXTLIBPATH       :=/ c\
     EXTLIBPATH       :=  \"\"
     " -e "
@@ -54,13 +59,10 @@ stdenv.mkDerivation rec {
     LIB_OUTPUTDIR    :=  ""
     ' -e '
     /TREE_OUTPUTDIR   :=/ c\
-    TREE_OUTPUTDIR    :=  ""
+    TREE_OUTPUTDIR   :=  ""
     ' -e "
-    /LIBPATH          :=/!b;n;c\
+    /LIBPATH          :=/$replaceNextCmds\
                          \"${sacStdLib}/lib/modlibs:$out/lib/modlibs:$out/lib/rt:\"
-    "  -e "
-    /SACINCLUDES      :=/ c\
-    SACINCLUDES      :=  \"-I$out/include/release\"
     " -i share/sac2crc$postFix
     substituteInPlace libexec/saccc$postFix \
       --replace /usr/sbin/bash ${bash}/bin/bash

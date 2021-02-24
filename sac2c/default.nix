@@ -1,13 +1,15 @@
-{ lib, stdenv, fetchurl, glibc, libuuid, gcc, binutils, sacStdLib, bash, autoPatchelfHook }:
+{ lib, stdenv, fetchurl,
+  glibc, libuuid, gcc, binutils,
+  sacVCs, sacStdLib,
+  bash, autoPatchelfHook,
+}:
 
 stdenv.mkDerivation rec {
+
+  inherit (sacVCs) version vname changes rev commit;
+
   name = "${pname}-${version}-${vname}-${commit}-${rev}";
   pname = "sac2c";
-  version = "1.3.3";
-  rev = "1";
-  changes = "552";
-  vname = "MijasCosta";
-  commit = "g630ef";
   src = fetchurl {
     url = "https://gitlab.science.ru.nl/sac-group/sac-packages/-/raw/master/packages/weekly/Linux/${version}-${changes}-${rev}/basic/${pname}-${version}-${vname}-${changes}-${commit}-omnibus.tar.gz";
     sha256 = "61ad03f16a4a13c8094bce016d9105979db3c6868120d156d908c1c011a6958d";

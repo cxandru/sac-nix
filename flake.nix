@@ -5,6 +5,15 @@
   inputs.flake-utils.url = github:numtide/flake-utils;
 
   outputs = { flake-utils, self, nixpkgs }:
+    # sac Version Components
+    let sacVCs = {
+          version = "1.3.3";
+          vname = "MijasCosta";
+          changes = "552";
+          rev = "1";
+          commit = "g630ef";
+        };
+    in
     flake-utils.lib.eachDefaultSystem ( system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -12,8 +21,8 @@
         with pkgs; rec {
           packages = flake-utils.lib.flattenTree rec {
             # TODO: should this be smtng like sac.compiler?
-            sac2c = callPackage ./sac2c { inherit sacStdLib; };
-            sacStdLib = callPackage ./stdlib {};
+            sac2c = callPackage ./sac2c { inherit sacStdLib sacVCs; };
+            sacStdLib = callPackage ./stdlib { inherit sacVCs; };
           };
           defaultPackage = packages.sac2c;
           apps.repl =

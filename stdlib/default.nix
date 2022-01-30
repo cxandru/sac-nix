@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
   name = "${pname}-${version}-${changes}-${commit}";
   src = fetchurl {
     url = "https://gitlab.sac-home.org/sac-group/sac-packages/-/raw/master/packages/weekly/Linux/${sacVersion}/basic/sac-stdlib-${version}-${changes}-${commit}.tar.gz";
-    sha256 = "f1ad920c8b0f6e41f6425f530aeb9a3869037081b97e914c5fb5b8cd9bf5fc26";
+    sha256 = "68a544498659f7048c3dc59db033f3bc68309d999aab75024fab7fccf02fc75f";
   };
   #We get rid of the versioned path segments as in nix versioning is in the prefix
   installPhase = ''

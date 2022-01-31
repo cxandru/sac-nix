@@ -1,22 +1,39 @@
-{ lib, stdenv, fetchurl,
-  glibc, libuuid, libxcrypt, gcc, binutils,
-  sacVCs, sacStdLib,
-  bash, autoPatchelfHook,
+{ lib, pkgs, stdenv, fetchurl,
+glibc, libuuid, gcc, binutils,
+  sacVCs, sac-stdlib,
+  bash, autoPatchelfHook
 }:
 
 stdenv.mkDerivation rec {
 
   inherit (sacVCs) version vname changes rev commit;
 
-  name = "${pname}-${version}-${vname}-${commit}-${rev}";
   pname = "sac2c";
+  name = "${pname}-${version}-${vname}-${commit}-${rev}";
   src = fetchurl {
-    url = "https://gitlab.science.ru.nl/sac-group/sac-packages/-/raw/master/packages/weekly/Linux/${version}-${changes}-${rev}/basic/${pname}-${version}-${vname}-${changes}-${commit}-omnibus.tar.gz";
-    sha256 = "581636207722094d9d1f38595ee479e76947c83159af12f312580dd81da49a1e";
+    url = "https://gitlab.sac-home.org/sac-group/sac-packages/-/raw/master/packages/weekly/Linux/${version}-${changes}-${rev}/basic/${pname}-${version}-${vname}-${changes}-${commit}-omnibus.tar.gz";
+    sha256 = "e4b34f7eeef7a3eed053304f1a6f341b706fd6ae2a2ad7406bc3b0c1b0c22077";
   };
+
+  # standard libxcrypt installs libxcrypt.so.1 by default, but this isn't the form of
+  # the lib that sac2c is linked to. So we change this so that we install in libxcrypt.so.2
+  # instead (which is standard on other systems).
+  mylibxcrypt = pkgs.libxcrypt.overrideAttrs (old: {
+    version = "4.4.27";
+    src = pkgs.fetchurl {
+      url = "https://github.com/besser82/libxcrypt/releases/download/v4.4.27/libxcrypt-4.4.27.tar.xz";
+      sha256 = "500898e80dc0d027ddaadb5637fa2bf1baffb9ccd73cd3ab51d92ef5b8a1f420";
+    };
+    preConfigure = ''
+      patchShebangs --build configure
+      patchShebangs build-aux/scripts
+      '';
+    configureFlags = [ "--disable-obsolete-api" ];
+  });
+
   nativeBuildInputs = [ autoPatchelfHook ];
   #libuuid.so.1, libcrypt.so.2
-  buildInputs = [ libuuid libxcrypt ];
+  buildInputs = [ libuuid mylibxcrypt ];
   #https://nixos.wiki/wiki/Packaging/Binaries
   #TODO: Use this instead of autoPatchElf
   rpath = lib.makeLibraryPath [
@@ -56,7 +73,7 @@ stdenv.mkDerivation rec {
     EXTLIBPATH       :=  \"\"
     " -e "
     /TREEPATH         :=  \".:\"/ c\
-    TREEPATH         :=  \".:${sacStdLib}/libexec:$out/libexec:\"
+    TREEPATH         :=  \".:${sac-stdlib}/libexec:$out/libexec:\"
     " -e '
     /LIB_OUTPUTDIR    :=/ c\
     LIB_OUTPUTDIR    :=  ""
@@ -65,7 +82,7 @@ stdenv.mkDerivation rec {
     TREE_OUTPUTDIR   :=  ""
     ' -e "
     /LIBPATH          :=/$replaceNextCmds\
-                         \"${sacStdLib}/lib/modlibs:$out/lib/modlibs:$out/lib/rt:\"
+                         \"${sac-stdlib}/lib/modlibs:$out/lib/modlibs:$out/lib/rt:\"
     " -i share/sac2crc$postFix
     substituteInPlace libexec/saccc$postFix \
       --replace /usr/sbin/bash ${bash}/bin/bash
@@ -103,6 +120,6 @@ stdenv.mkDerivation rec {
     description = "The compiler (sac2c) of the Single-Assignment C programming language";
     homepage = "http://www.sac-home.org/";
     #changelog = ??
-    #license = TODO: ./LICENSE.txt;
+    license = ../pkg-LICENSE.txt;
   };
 }

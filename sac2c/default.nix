@@ -11,8 +11,8 @@ stdenv.mkDerivation rec {
   pname = "sac2c";
   name = "${pname}-${version}-${vname}-${commit}-${rev}";
   src = fetchurl {
-    url = "https://gitlab.sac-home.org/sac-group/sac-packages/-/raw/master/packages/weekly/Linux/${version}-${changes}-${rev}/basic/${pname}-${version}-${vname}-${changes}-${commit}-omnibus.tar.gz";
-    sha256 = "e4b34f7eeef7a3eed053304f1a6f341b706fd6ae2a2ad7406bc3b0c1b0c22077";
+    url = "https://gitlab.sac-home.org/sac-group/sac-packages/-/raw/master/packages/weekly/Linux-x86_64/${version}-${changes}-${rev}/basic/${pname}-${version}-${vname}-${changes}-${commit}-omnibus.tar.gz";
+    hash = "sha256-EFcr8PnzYKXFOHnqdAROUsIADh6OQOOKX8uPQ4+lwPQ=";
   };
 
   # standard libxcrypt installs libxcrypt.so.1 by default, but this isn't the form of

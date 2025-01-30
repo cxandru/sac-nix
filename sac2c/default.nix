@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   name = "${pname}-${version}-${vname}-${commit}-${rev}";
   src = fetchurl {
     url = "https://gitlab.sac-home.org/sac-group/sac-packages/-/raw/master/packages/weekly/Linux-x86_64/${version}-${changes}-${rev}/basic/${pname}-${version}-${vname}-${changes}-${commit}-omnibus.tar.gz";
-    hash = "sha256-EFcr8PnzYKXFOHnqdAROUsIADh6OQOOKX8uPQ4+lwPQ=";
+    hash = "sha256-S71aHQapqmylD/eUYncrjyoOwF9ZEwl8veYR0mcy02I=";
   };
 
   # standard libxcrypt installs libxcrypt.so.1 by default, but this isn't the form of
@@ -21,8 +21,8 @@ stdenv.mkDerivation rec {
   mylibxcrypt = pkgs.libxcrypt.overrideAttrs (old: {
     version = "4.4.27";
     src = pkgs.fetchurl {
-      url = "https://github.com/besser82/libxcrypt/releases/download/v4.4.27/libxcrypt-4.4.27.tar.xz";
-      sha256 = "500898e80dc0d027ddaadb5637fa2bf1baffb9ccd73cd3ab51d92ef5b8a1f420";
+      url = "https://github.com/besser82/libxcrypt/releases/download/v4.4.38/libxcrypt-4.4.38.tar.xz";
+      sha256 = "sha256-gDBLnDBup5kyfwHZp1Sb2ygxd4kYJjHxtU9FEbQgbdY=";
     };
     preConfigure = ''
       patchShebangs --build configure
@@ -120,6 +120,6 @@ stdenv.mkDerivation rec {
     description = "The compiler (sac2c) of the Single-Assignment C programming language";
     homepage = "http://www.sac-home.org/";
     #changelog = ??
-    license = ../pkg-LICENSE.txt;
+    license = [ ../pkg-LICENSE.txt ];
   };
 }

@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
   name = "${pname}-${version}-${changes}-${commit}";
   src = fetchurl {
     url = "https://gitlab.sac-home.org/sac-group/sac-packages/-/raw/master/packages/weekly/Linux-x86_64/${sacVersion}/basic/sac-stdlib-${version}-${changes}-${commit}.tar.gz";
-    hash = "sha256-oJ7A1FI9uj+i+fjU5/bDvKvfVhuIudgYK//CK8UYuaQ=";
+    hash = "sha256-isz+GXP1r/18gvclWEZWBCD+se2obkHGvk//l4rfxLM=";
   };
   #We get rid of the versioned path segments as in nix versioning is in the prefix
   installPhase = ''
@@ -22,6 +22,6 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     description = "The standard library for the Single-Assignment C programming language";
     homepage = "http://www.sac-home.org/";
-    license = ../pkg-LICENSE.txt;
+    license = [ ../pkg-LICENSE.txt ];
   };
 }

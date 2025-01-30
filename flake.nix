@@ -15,14 +15,14 @@
       sacVCs = {
         version = "1.3.3";
         vname = "MijasCosta";
-        changes = "1079";
+        changes = "1291";
         rev = "1";
-        commit = "g648dba";
+        commit = "g383e8";
       };
       stdlibVCs = {
         version = "1.3";
-        changes = "152";
-        commit = "gaa99";
+        changes = "250";
+        commit = "g6dd8";
       };
       sac-compiler = pkgs.callPackage ./sac2c { inherit sacVCs sac-stdlib; };
       sac-stdlib = pkgs.callPackage ./stdlib { inherit sacVCs stdlibVCs; };
